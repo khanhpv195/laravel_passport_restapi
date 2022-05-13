@@ -17,6 +17,7 @@ class RegisterController extends BaseController
      */
     public function register(Request $request)
     {
+       try {
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'email' => 'required|email',
@@ -36,6 +37,9 @@ class RegisterController extends BaseController
         $success['email'] =  $user->email;
    
         return $this->sendResponse($success, 'User register successfully.');
+       } catch (\Throwable $th) {
+         return $this->sendError('Validation Error.',$th);       
+       }
     }
    
     /**
@@ -45,15 +49,19 @@ class RegisterController extends BaseController
      */
     public function login(Request $request)
     {
-        if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){ 
-            $user = Auth::user(); 
-            $success['token'] =  $user->createToken('MyApp')-> accessToken; 
-            $success['name'] =  $user->name;
-   
-            return $this->sendResponse($success, 'User login successfully.');
-        } 
-        else{ 
-            return $this->sendError('Unauthorised.', ['error'=>'Unauthorised']);
-        } 
+        try {
+            if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){ 
+                $user = Auth::user(); 
+                $success['token'] =  $user->createToken('MyApp')-> accessToken; 
+                $success['name'] =  $user->name;
+       
+                return $this->sendResponse($success, 'User login successfully.');
+            } 
+            else{ 
+                return $this->sendError('Unauthorised.', ['error'=>'Unauthorised']);
+            } 
+        } catch (\Throwable $th) {
+            throw $th;
+        }
     }
 }
