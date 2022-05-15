@@ -61,7 +61,7 @@ class RegisterController extends BaseController
                 return $this->sendError('Unauthorised.', ['error'=>'Unauthorised']);
             } 
         } catch (\Throwable $th) {
-            throw $th;
+            return $this->sendError('Unauthorised.', ['error'=>'Unauthorised']);
         }
     }
 }
