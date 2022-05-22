@@ -15,6 +15,6 @@ class Product extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'price','avatar','detail','cate_id'
+        'name', 'price','avatar','detail','cate_id','slug'
     ];
 }

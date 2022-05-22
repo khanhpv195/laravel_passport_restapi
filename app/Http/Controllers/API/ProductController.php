@@ -7,7 +7,8 @@ use App\Http\Controllers\API\BaseController as BaseController;
 use App\Models\Product;
 use Validator;
 use App\Http\Resources\ProductResource;
-   
+use Illuminate\Support\Str;
+
 class ProductController extends BaseController
 {
     /**
@@ -40,8 +41,16 @@ class ProductController extends BaseController
         if($validator->fails()){
             return $this->sendError('Validation Error.', $validator->errors());       
         }
-   
-        $product = Product::create($input);
+        $slug = Str::slug($request->get('name')) . Str::random(5).".html";
+        $data = [
+            "name"=> $request->get('name'),
+            "slug"=> $slug,
+            "price"=> $request->get('price'),
+            "avatar"=> $request->get('avatar'),
+            "cate_id"=> $request->get('cate_id'),
+            "detail"=> $request->get('avatar')
+        ];
+        $product = Product::create($data);
    
         return $this->sendResponse(new ProductResource($product), 'Product created successfully.');
     } 

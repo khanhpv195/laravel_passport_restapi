@@ -16,7 +16,8 @@ class CategoryController extends BaseController
      */
     public function index()
     {
-        //
+        $category = Category::all();
+        return $this->sendResponse($category, 'Category list');
     }
 
     /**
@@ -37,6 +38,7 @@ class CategoryController extends BaseController
      */
     public function store(Request $request)
     {
+    
         $category = Category::create($request->all());
         return $this->sendResponse($category, 'Category created successfully.');
 

@@ -21,6 +21,7 @@ class ProductResource extends JsonResource
             'avatar' => $this->avatar,
             'detail' => $this->detail,
             'cate_id' => $this->cate_id,
+            'slug' => $this->slug,
             'created_at' => $this->created_at->format('d/m/Y'),
             'updated_at' => $this->updated_at->format('d/m/Y'),
         ];

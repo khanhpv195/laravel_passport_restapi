@@ -20,6 +20,7 @@ class ProductFactory extends Factory
     {
         return [
             'name' =>  $this->faker->name,
+            'slug' =>  $this->faker->name,
             'price' => $this->faker->randomFloat(2, 0, 10000),
             "cate_id"=>1,
             'avatar' => $this->faker->imageUrl(400,400),
