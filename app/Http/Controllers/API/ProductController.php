@@ -15,9 +15,9 @@ class ProductController extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::paginate(10);
+        $products = Product::where('cate_id',$request->id)->paginate($request->limit);
     
         return $this->sendResponse($products, 'Products retrieved successfully.');
     }
@@ -33,7 +33,8 @@ class ProductController extends BaseController
    
         $validator = Validator::make($input, [
             'name' => 'required',
-            'detail' => 'required'
+            'detail' => 'required',
+            'cate_id' => 'required'
         ]);
    
         if($validator->fails()){

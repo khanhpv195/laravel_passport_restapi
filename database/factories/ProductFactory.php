@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
+use Faker\Generator as Faker;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Product>
@@ -18,9 +19,10 @@ class ProductFactory extends Factory
     public function definition()
     {
         return [
-            'name' => Str::random(10),
-            'price' => 100,
-            'avatar' => "https://media3.scdn.vn/img4/2022/03_10/9DhkyfI44DyVk7qnHZdS_simg_b5529c_250x250_maxb.jpg",
+            'name' =>  $this->faker->name,
+            'price' => $this->faker->randomFloat(2, 0, 10000),
+            "cate_id"=>2,
+            'avatar' => $this->faker->image(public_path('images'),400,300, null, false),
             "detail"=> Str::random(100)
         ];
     }
