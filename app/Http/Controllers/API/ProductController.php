@@ -48,7 +48,7 @@ class ProductController extends BaseController
             "price"=> $request->get('price'),
             "avatar"=> $request->get('avatar'),
             "cate_id"=> $request->get('cate_id'),
-            "detail"=> $request->get('avatar')
+            "detail"=> $request->get('detail')
         ];
         $product = Product::create($data);
    
