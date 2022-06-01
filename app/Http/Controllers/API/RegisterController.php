@@ -35,7 +35,7 @@ class RegisterController extends BaseController
         $success['token'] =  $user->createToken('MyApp')->accessToken;
         $success['name'] =  $user->name;
         $success['email'] =  $user->email;
-
+        $success['id'] =  $user->id;
         return $this->sendResponse($success, 'User register successfully.');
        } catch (\Throwable $th) {
          return $this->sendError('Validation Error.',$th);
@@ -55,6 +55,7 @@ class RegisterController extends BaseController
                 $success['token'] =  $user->createToken('MyApp')-> accessToken;
                 $success['name'] =  $user->name;
                 $success['email'] =  $user->email;
+                $success['id'] =  $user->id;
 
                 return $this->sendResponse($success, 'User login successfully.');
             }

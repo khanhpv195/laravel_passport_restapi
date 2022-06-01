@@ -1,11 +1,11 @@
 <?php
-   
+
 namespace App\Http\Controllers\API;
-   
+
 use Illuminate\Http\Request;
 use App\Http\Controllers\API\BaseController as BaseController;
 use App\Models\Product;
-use Validator;
+use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\ProductResource;
 use Illuminate\Support\Str;
 
@@ -19,7 +19,7 @@ class ProductController extends BaseController
     public function index(Request $request)
     {
         $products = Product::where('cate_id',$request->id)->paginate($request->limit);
-    
+
         return $this->sendResponse($products, 'Products retrieved successfully.');
     }
     /**
@@ -31,15 +31,15 @@ class ProductController extends BaseController
     public function store(Request $request)
     {
         $input = $request->all();
-   
+
         $validator = Validator::make($input, [
             'name' => 'required',
             'detail' => 'required',
             'cate_id' => 'required'
         ]);
-   
+
         if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());       
+            return $this->sendError('Validation Error.', $validator->errors());
         }
         $slug = Str::slug($request->get('name')) . Str::random(5).".html";
         $data = [
@@ -51,10 +51,10 @@ class ProductController extends BaseController
             "detail"=> $request->get('detail')
         ];
         $product = Product::create($data);
-   
+
         return $this->sendResponse(new ProductResource($product), 'Product created successfully.');
-    } 
-   
+    }
+
     /**
      * Display the specified resource.
      *
@@ -64,14 +64,14 @@ class ProductController extends BaseController
     public function show($id)
     {
         $product = Product::find($id);
-  
+
         if (is_null($product)) {
             return $this->sendError('Product not found.');
         }
-   
+
         return $this->sendResponse(new ProductResource($product), 'Product retrieved successfully.');
     }
-    
+
     /**
      * Update the specified resource in storage.
      *
@@ -82,23 +82,23 @@ class ProductController extends BaseController
     public function update(Request $request, Product $product)
     {
         $input = $request->all();
-   
+
         $validator = Validator::make($input, [
             'name' => 'required',
             'detail' => 'required'
         ]);
-   
+
         if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());       
+            return $this->sendError('Validation Error.', $validator->errors());
         }
-   
+
         $product->name = $input['name'];
         $product->detail = $input['detail'];
         $product->save();
-   
+
         return $this->sendResponse(new ProductResource($product), 'Product updated successfully.');
     }
-   
+
     /**
      * Remove the specified resource from storage.
      *
@@ -108,7 +108,7 @@ class ProductController extends BaseController
     public function destroy(Product $product)
     {
         $product->delete();
-   
+
         return $this->sendResponse([], 'Product deleted successfully.');
     }
 }

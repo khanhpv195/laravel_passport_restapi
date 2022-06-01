@@ -7,6 +7,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\ProductResource;
 use Illuminate\Http\Request;
 use App\Models\Order;
+use App\Models\Product;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
+
 class OrderController extends BaseController
 {
     /**
@@ -18,9 +22,17 @@ class OrderController extends BaseController
     const ORDER_PROCESSING = 2;
     const ORDER_COMPLETED = 3;
     const ORDER_CANCEL = 3;
-    public function index()
+
+
+    public function index(Request $request)
     {
-        //
+        $user_id = auth()->guard('api')->user()->id;
+        $order = DB::select(DB::raw("SELECT o.id,o.full_name,o.phone,p.name,o.address,o.quantity,o.status,o.created_at
+            FROM reactjs_test.orders as o
+            LEFT JOIN products as p ON o.product_id = p.id
+            LEFT JOIN users as u ON o.user_id = u.id where u.id = $user_id  order by o.created_at DESC limit 10 "));
+        return $this->sendResponse($order, 'Order retrieved successfully.');
+
     }
 
     /**
@@ -42,24 +54,38 @@ class OrderController extends BaseController
     public function store(Request $request)
     {
         $data = $request->all();
-        $item = $data['item'];
-        $order = [];
-        foreach ($item as $key=>$value)
-        {
-            $item_order = [
-                'user_id'=> $data['user_id'],
-                'full_name'=> $data['full_name'],
-                'phone'=> $data['phone'],
-                'status'=>self::ORDER_NEW,
-                'address'=> $data['address'],
-                'product_id'=>$value['product_id'],
-                'quantity'=> $value['quantity'],
-                'price'=> $value['price']
-            ];
-             $result = Order::create($item_order);
-            array_push($order,$result);
+
+        $validator = Validator::make($data, [
+            'item' => 'required',
+            'user_id' => 'required',
+            'full_name' => 'required',
+            'phone' => 'required',
+        ]);
+        if($validator->fails()){
+            return $this->sendError('Validation Error.', $validator->errors());
         }
-        return $this->sendResponse( order,'Product created successfully.');
+        try {
+            $item = $data['item'];
+            $result = [];
+            foreach ($item as $key=>$value)
+            {
+                $item_order = [
+                    'user_id'=> $data['user_id'],
+                    'full_name'=> $data['full_name'],
+                    'phone'=> $data['phone'],
+                    'status'=>self::ORDER_NEW,
+                    'address'=> $data['address'],
+                    'product_id'=>$value['product_id'],
+                    'quantity'=> $value['quantity'],
+                    'price'=> $value['price']
+                ];
+                $order = Order::create($item_order);
+                $result[] = $order;
+            }
+            return $this->sendResponse( $result,'Product created successfully.');
+        }  catch (Exception $e){
+            return $this->sendError( $e->getMessage(),'Product created error.');
+        }
     }
 
     /**
