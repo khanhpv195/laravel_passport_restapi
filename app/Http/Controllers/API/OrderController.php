@@ -8,6 +8,7 @@ use App\Http\Resources\ProductResource;
 use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\Product;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
@@ -27,11 +28,15 @@ class OrderController extends BaseController
     public function index(Request $request)
     {
         $user_id = auth()->guard('api')->user()->id;
-        $order = DB::select(DB::raw("SELECT o.id,o.full_name,o.phone,p.name,o.address,o.quantity,o.status,o.created_at
+        try {
+            $order = DB::select(DB::raw("SELECT o.id,o.full_name,o.phone,p.name,o.address,o.quantity,o.status,o.created_at
             FROM reactjs_test.orders as o
             LEFT JOIN products as p ON o.product_id = p.id
             LEFT JOIN users as u ON o.user_id = u.id where u.id = $user_id  order by o.created_at DESC limit 10 "));
-        return $this->sendResponse($order, 'Order retrieved successfully.');
+            return $this->sendResponse($order, 'Order retrieved successfully.');
+        }catch (Exception $e){
+            return $this->sendError( $e->getMessage(),'Product created error.');
+        }
 
     }
 

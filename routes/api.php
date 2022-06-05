@@ -30,4 +30,4 @@ Route::get('users', [UserController::class, 'index']);
 
 Route::resource('products', ProductController::class);
 Route::resource('categories', CategoryController::class);
-Route::resource('order', OrderController::class);
+Route::resource('order', OrderController::class)->middleware('auth:api');
